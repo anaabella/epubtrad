@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from deep_translator import GoogleTranslator
 from langdetect import detect
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 import logging
 from PyPDF2 import PdfReader
 from datetime import datetime, timedelta
