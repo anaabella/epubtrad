@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Panel de Administración{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+        <p class="text-muted">Resumen general del bot de traducción</p>
+    </div>
+</div>
+
+<!-- Estadísticas principales -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title mb-0">{{ stats.total_users }}</h5>
+                        <small>Usuarios Totales</small>
+                    </div>
+                    <i class="fas fa-users fa-2x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title mb-0">{{ stats.total_translations }}</h5>
+                        <small>Traducciones Totales</small>
+                    </div>
+                    <i class="fas fa-book fa-2x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title mb-0">{{ stats.active_users_today }}</h5>
+                        <small>Activos Hoy</small>
+                    </div>
+                    <i class="fas fa-user-check fa-2x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title mb-0">{{ stats.total_files_processed }}</h5>
+                        <small>Archivos Procesados</small>
+                    </div>
+                    <i class="fas fa-file-alt fa-2x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-line"></i> Actividad de Traducciones</h5>
+            </div>
+            <div class="card-body">
+                {% if charts.translations_chart %}
+                    <img src="{{ charts.translations_chart }}" class="img-fluid" alt="Gráfico de traducciones">
+                {% else %}
+                    <p class="text-muted">No hay suficientes datos para mostrar el gráfico.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Información del sistema -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-server"></i> Estado del Sistema</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Uptime:</strong> {{ stats.uptime }}</p>
+                <p><strong>Uso de Memoria:</strong> {{ stats.memory_usage }}%</p>
+                <p><strong>Versión Python:</strong> {{ stats.python_version|default('N/A') }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-plug"></i> Plugins Activos</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success"></i> Sistema de Plugins</li>
+                    <li><i class="fas fa-check text-success"></i> Text-to-Speech</li>
+                    <li><i class="fas fa-check text-success"></i> IA Generativa</li>
+                    <li><i class="fas fa-check text-success"></i> Formatos Avanzados</li>
+                    <li><i class="fas fa-check text-success"></i> Recomendaciones</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Actualizar estadísticas cada 30 segundos
+setInterval(function() {
+    fetch('/api/stats')
+        .then(response => response.json())
+        .then(data => {
+            // Actualizar contadores
+            document.querySelector('.bg-primary .card-title').textContent = data.total_users;
+            document.querySelector('.bg-success .card-title').textContent = data.total_translations;
+            document.querySelector('.bg-info .card-title').textContent = data.active_users_today;
+            document.querySelector('.bg-warning .card-title').textContent = data.total_files_processed;
+        })
+        .catch(error => console.error('Error actualizando estadísticas:', error));
+}, 30000);
+</script>
+{% endblock %}

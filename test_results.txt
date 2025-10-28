@@ -1,0 +1,1 @@
+Pruebas completadas. Wattpad y Tumblr funcionan correctamente. Twitter tiene problemas de API (bloqueado por Twitter/X). Las funciones están listas para usar.
