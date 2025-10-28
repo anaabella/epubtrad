@@ -95,10 +95,20 @@ audit_logger.setLevel(logging.INFO)
 
 # Configuración de base de datos y caché
 if redis:
-    REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
-    redis_client = redis.from_url(REDIS_URL)
+    REDIS_URL = os.environ.get("REDIS_URL", "").strip()
+    if REDIS_URL and REDIS_URL.startswith(('redis://', 'rediss://', 'unix://')):
+        try:
+            redis_client = redis.from_url(REDIS_URL)
+        except Exception as e:
+            logger.warning(f"Error conectando a Redis: {e}, usando memoria")
+            redis_client = None
+    else:
+        redis_client = None
 else:
-    # Fallback a diccionario en memoria
+    redis_client = None
+
+# Si no hay Redis, usar diccionario en memoria
+if redis_client is None:
     class MockRedis:
         def __init__(self):
             self.data = {}
